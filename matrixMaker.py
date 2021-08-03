@@ -181,5 +181,24 @@ class matrixMaker():
             groundhog = 1
 
     def saveToFile(self):
-        print("Zapisać macierz? (y/n): ")
-        print("Macierz została zapisana jako M01.")
+        border = 1
+        while border >= 1:
+            try:
+                doSaving = input("Zapisać macierz? (y/n): ")
+                if doSaving != "y" and doSaving != "n":
+                    if border > 1:
+                        print("WPISZ Y LUB N!")
+                    else:
+                        print("Wpisz y lub n...")
+                    border += 1
+                else:               
+                    border = 0
+            except:
+                print("Została podana zła wartość")
+        
+        if doSaving == "y":
+            matName = input("Podaj nazwę macierzy: ")
+            with open('matricesStorage.csv', 'a') as store:
+                np.savetxt(store, self.workingMatrix, delimiter=',', fmt='%f', header = matName, footer = "end of {}".format(matName))
+            print("Macierz została zapisana jako {}".format(matName))
+            
