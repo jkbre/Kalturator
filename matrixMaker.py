@@ -67,7 +67,7 @@ class matrixMaker():
                             print("Podany wymiar jest błędny")
                         border += 1
                     else:
-                        self.n = int(self.n)
+                        self.m = int(self.m)
                         border = 0
                 except:
                     print("Została podana zła wartość")
@@ -180,6 +180,49 @@ class matrixMaker():
             print(self.workingMatrix)
             groundhog = 1
 
-    def saveToFile(self):
-        print("Zapisać macierz? (y/n): ")
-        print("Macierz została zapisana jako M01.")
+    def saveToFile(self,insertedName):
+        matricesDictName = insertedName
+        border = 1
+        while border >= 1:
+            try:
+                doSaving = input("Zapisać macierz? (y/n): ")
+                if doSaving != "y" and doSaving != "n":
+                    if border > 1:
+                        print("WPISZ Y LUB N!")
+                    else:
+                        print("Wpisz y lub n...")
+                    border += 1
+                else:               
+                    border = 0
+            except:
+                print("Została podana zła wartość")
+        
+        border = 1
+        if doSaving == "y":
+            # matName = input("Podaj nazwę macierzy: ")
+            # with open('matricesStorage.csv', 'a') as store:
+            #     np.savetxt(store, self.workingMatrix, delimiter=',', fmt='%f', header = matName, footer = "end of {}".format(matName))
+            # print("Macierz została zapisana jako {}".format(matName))
+            while border >=1:
+                try:
+                    matrixName = input("Podaj nazwę macierzy: ")
+                    border = 0
+                except:
+                    if border > 1:
+                        print("ZOSTAŁA PODANA BŁĘDNA NAZWA!")
+                    else:
+                        print("Została podana błędna nazwa")
+                    border += 1
+            
+            workingDict = {matrixName: self.workingMatrix}
+
+            try:
+                matricesDict = np.load(matricesDictName, allow_pickle = 'TRUE')
+                print(matricesDict)
+                print("test")
+                matricesDict.item().update(workingDict)
+                print(matricesDict)
+                print("test2")
+                np.save(matricesDictName,matricesDict)
+            except:
+                np.save(matricesDictName,workingDict)
