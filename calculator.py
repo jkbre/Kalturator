@@ -1,9 +1,11 @@
 import matrixMaker as matMak
+import numpy as np
 
 class calculator():
 
     def __init__(self):
         super().__init__()
+        self.matricesDictName = "matricesDict.npy"
         
 
     def matrixMaker(self):
@@ -12,7 +14,7 @@ class calculator():
             making = matMak.matrixMaker()
             making.matrixDef()
             making.valuesInserter()
-            making.saveToFile()
+            making.saveToFile(self.matricesDictName)
             border = 1
             while border >= 1:
                 try:
@@ -27,3 +29,7 @@ class calculator():
                         border = 0
                 except:
                     print("Została podana zła wartość")
+
+    def dictShow(self):
+        matricesDict = np.load(self.matricesDictName, allow_pickle = 'TRUE')
+        print(matricesDict)
