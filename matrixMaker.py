@@ -218,11 +218,7 @@ class matrixMaker():
 
             try:
                 matricesDict = np.load(matricesDictName, allow_pickle = 'TRUE')
-                print(matricesDict)
-                print("test")
                 matricesDict.item().update(workingDict)
-                print(matricesDict)
-                print("test2")
                 np.save(matricesDictName,matricesDict)
             except:
                 np.save(matricesDictName,workingDict)

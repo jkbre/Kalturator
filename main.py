@@ -1,5 +1,5 @@
 import calculator as calc
 
 app = calc.calculator()
-app.matrixMaker()
-app.dictShow()
+print("Wpisz 'help' by zobaczyć listę dostepnych koment")
+app.controlLine()
