@@ -199,10 +199,6 @@ class matrixMaker():
         
         border = 1
         if doSaving == "y":
-            # matName = input("Podaj nazwę macierzy: ")
-            # with open('matricesStorage.csv', 'a') as store:
-            #     np.savetxt(store, self.workingMatrix, delimiter=',', fmt='%f', header = matName, footer = "end of {}".format(matName))
-            # print("Macierz została zapisana jako {}".format(matName))
             while border >=1:
                 try:
                     matrixName = input("Podaj nazwę macierzy: ")
@@ -217,8 +213,9 @@ class matrixMaker():
             workingDict = {matrixName: self.workingMatrix}
 
             try:
-                matricesDict = np.load(matricesDictName, allow_pickle = 'TRUE')
-                matricesDict.item().update(workingDict)
+                matricesDictNP = np.load(matricesDictName, allow_pickle = 'TRUE')
+                matricesDict = matricesDictNP.item()
+                matricesDict.update(workingDict)
                 np.save(matricesDictName,matricesDict)
             except:
                 np.save(matricesDictName,workingDict)
