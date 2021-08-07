@@ -5,11 +5,18 @@ import numpy as np
 class calculator():
 
     def __init__(self):
+        """
+        Obiekt kalkulatora, pozwalający na obsługę funkcji tworzących macierzę oraz funkcji matematycznych
+        poprzez wpisywanie komend bądź argumentów konsoli. 
+        """
         super().__init__()
         self.matricesDictName = "matricesDict.npy"
         self.resultsDictName = "resultsDict.npy"
 
     def matrixMaker(self):
+        """
+        Funkcja służąca do tworzenia macierzy o dowolnej wielkości.
+        """
         doAgain = "y"
         while doAgain == "y":     
             making = matMak.matrixMaker()
@@ -32,28 +39,43 @@ class calculator():
                     print("Została podana zła wartość")
 
     def dictShow(self):
+        """
+        Funckja pokazująca wszystkie zapisane macierzę.
+        """
         matricesDictNP = np.load(self.matricesDictName, allow_pickle = 'TRUE')
         for key,value in matricesDictNP.item().items():
             print(key, ':\n', value)
 
     def resultsShow(self):
+        """
+        Funkcja pokazująca wszystkie zapisane wyniki działań matemtycznych.
+        """
         resultsDictNP = np.load(self.resultsDictName, allow_pickle = 'TRUE')
         for key,value in resultsDictNP.item().items():
             print(key, ':\n', value)
 
     def matrixOperations(self,operando):
+        """
+        Funkcja przyjmująca listę zawierającą działanie matemtyczne wpisane przez użytkownika.
+        Przeprowadzone działanie matematyczne, może zostać zapisane przez użytkownika do pliku.\n
+        operando -> lista zawierająca wpisane przez użytkownika działanie
+        """
         doing = matOp.matrixOperations(self.matricesDictName, self.resultsDictName)
-        doing.operations(operando)
-        doing.saveToFile(operando)
+        border = doing.operations(operando)
+        if border != 1:
+            doing.saveToFile(operando)
 
     def helpGuide(self):
-        print("Możliwe działania:")
+        """
+        Fukcja wyświetlająca spis dostepnych komend i działań w aplikacji.
+        """
+        print("\n Możliwe działania:")
         print("\t Tworzenie Macierzy (make)")
-        print("\t Wyświetlenie utworzonych macierzy (show)")
+        print("\t Wyświetlenie utworzonych macierzy / otrzmanych wyników (show mat/res)")
         print("\t Wyłączenie programu (exit)")
         print("\t Wykonanie obliczenia (do ...)")
         
-        print("\nMożliwe obliczenia:")
+        print("\n Możliwe obliczenia:")
         print("\t Dodawanie (A + B)")
         print("\t Odejmowanie (A - B)")
         print("\t Mnożenie (A * B)")
@@ -66,6 +88,9 @@ class calculator():
         print("\t Odwracanie macierzy (inv A)\n")
 
     def controlLine(self):
+        """
+        Funkcja slużąca do obsługi funkcjonalności kalkulatora.
+        """
         argMode = self.consoleArg()
         if argMode == 1:
             return 0
@@ -102,6 +127,9 @@ class calculator():
                     print("Podano nieznaną komendę")
         
     def consoleArg(self):
+        """
+        Fukcja obsługująca argumenty podane z konsoli.
+        """
         import sys
 
         for i, arg in enumerate(sys.argv):

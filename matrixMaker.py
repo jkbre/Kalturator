@@ -1,13 +1,17 @@
 import numpy as np
 
 class matrixMaker():
+    """
+    Obiekt wykonujący tworzenie oraz zapisywanie macierzy.
+    """
 
     def __init__(self):
         super().__init__()
 
     def matrixDef(self):
         """
-        funkcja pobierająca od użytkownika wymiary macierzy
+        Funkcja pobierająca od użytkownika wymiary macierzy 
+        oraz tworząca puste macierze o podanej wielkości.
         """
         border = 1
         while border >= 1:
@@ -78,12 +82,9 @@ class matrixMaker():
             self.workingMatrix = np.empty((self.n,self.m),float)
 
     def valuesInserter(self):
-        #
-        #if self.quby == "y":
-        #    self.workingMatrix = np.empty((self.n,self.n),float)
-        #else:
-        #    self.workingMatrix = np.empty((self.n,self.m),float)
-        #
+        """
+        Funkcja wprowadzająca wartości podane przez użytkownika do wcześniej utworzonych macierzy.
+        """
         for i in range(self.n):
             border = 1
             while border >= 1:
@@ -116,6 +117,9 @@ class matrixMaker():
         self.valueCorrector()
         
     def valueCorrector(self):
+        """
+        Funkcja pozwalająca na poprawę wprowadzonych wartości umieszczonych w macierzy.
+        """
         border = 1
         groundhog = 0
         while border >= 1:
@@ -181,6 +185,10 @@ class matrixMaker():
             groundhog = 1
 
     def saveToFile(self,insertedName):
+        """
+        Funkcja zapisująca otrzymaną macierz do pliku.\n
+        insertedName -> nazwa pliku zapisu
+        """
         matricesDictName = insertedName
         border = 1
         while border >= 1:

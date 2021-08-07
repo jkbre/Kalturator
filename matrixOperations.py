@@ -1,13 +1,13 @@
 import numpy as np
 
 class matrixOperations():
-    """
+
+    def __init__(self, matricesDictName, resultsDictName):
+        """
         W celu przeprowadzenia obliczeń tworzony jest obiekt przechowujący wszystkie potrzebne informajce do ich przeprowadzenia.\n
         matricesDictName -> nazwa pliku w którym zapisywane są powstałe macierze\n
         resultsDictName -> nazwa pliku w którym zapisywane są otrzymane wyniki
-    """
-
-    def __init__(self, matricesDictName, resultsDictName):
+        """
         super().__init__()
         self.matricesDictName = matricesDictName
         self.resultsDictName = resultsDictName
@@ -31,7 +31,12 @@ class matrixOperations():
             self.resultsDict = {}
 
     def operations(self,operando):
-        
+        """
+        Funkcja przyjąca listę, zawierającą wpisaną przez użytkownika działanie matematyczne.\n
+        W zależności od wpisanej komendy zostają wykonane odpowiednie
+        działania, jednak jedynie w przypadku spełnienia odpowiednich warunków matemtycznych.\n
+        operando -> lista zawierająca wpisane przez użytkownika działanie
+        """
         try:
             self.NumA = float(operando[0])
             self.NumB = float(operando[2])
@@ -117,12 +122,21 @@ class matrixOperations():
                 if operando[1] == "@":
                     if nXm1[1] == nXm2[0]:
                         self.results = self.workingMatA @ self.workingMatB
+                    else:
+                        print("Nieprawidłowe wymiary macierzy")
+                        return 1
         except:
             None
 
         print(self.results)
+        return 0
 
     def saveToFile(self,operando):
+        """
+        Funkcja przyjąca listę, zawierającą wpisaną przez użytkownika działanie matematyczne.
+        Zapisuje otrzymany przez obiekt wynik podanego działania matematycznego do pliku.\n
+        operando -> lista zawierająca wpisane przez użytkownika działanie
+        """
         border = 1
         while border >= 1:
             try:
