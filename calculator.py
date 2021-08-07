@@ -8,7 +8,6 @@ class calculator():
         super().__init__()
         self.matricesDictName = "matricesDict.npy"
         self.resultsDictName = "resultsDict.npy"
-        
 
     def matrixMaker(self):
         doAgain = "y"
@@ -67,6 +66,9 @@ class calculator():
         print("\t Odwracanie macierzy (inv A)\n")
 
     def controlLine(self):
+        argMode = self.consoleArg()
+        if argMode == 1:
+            return 0
         border = 1
         while border == 1:
             roger = input(">>> ")
@@ -81,12 +83,47 @@ class calculator():
             if workingRoger[0] == "make":
                 self.matrixMaker()
 
-            if workingRoger[0] == "show":
-                if workingRoger[1] == "mat":
+            if workingRoger[0] == "show":  
+                try:
+                    if workingRoger[1] == "mat":
+                        self.dictShow()
+                    elif workingRoger[1] == "res":
+                        self.resultsShow()
+                    else:
+                        print("Wpisano nieznaną komendę")
+                except:
                     self.dictShow()
-                if workingRoger[1] == "res":
                     self.resultsShow()
 
             if workingRoger[0] == "do":
-                self.matrixOperations(workingRoger[1:])
+                try:
+                    self.matrixOperations(workingRoger[1:])
+                except:
+                    print("Podano nieznaną komendę")
         
+    def consoleArg(self):
+        import sys
+
+        for i, arg in enumerate(sys.argv):
+            if arg == "-h":
+                self.helpGuide()
+                return 1
+            if arg == "-m":
+                self.matrixMaker()
+                return 1
+            if arg == "-s":
+                self.dictShow()
+                self.resultsShow()
+                return 1
+            if arg == "-sm":
+                self.dictShow()
+                return 1
+            if arg == "-sr":
+                self.resultsShow()              
+                return 1
+            if arg == "-d":
+                try:
+                    self.matrixOperations(sys.argv[2:])
+                except:
+                    print("Podano nieznaną komendę")
+                return 1

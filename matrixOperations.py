@@ -1,6 +1,11 @@
 import numpy as np
 
 class matrixOperations():
+    """
+        W celu przeprowadzenia obliczeń tworzony jest obiekt przechowujący wszystkie potrzebne informajce do ich przeprowadzenia.\n
+        matricesDictName -> nazwa pliku w którym zapisywane są powstałe macierze\n
+        resultsDictName -> nazwa pliku w którym zapisywane są otrzymane wyniki
+    """
 
     def __init__(self, matricesDictName, resultsDictName):
         super().__init__()
@@ -9,6 +14,10 @@ class matrixOperations():
         self.loadingFromFile()
 
     def loadingFromFile(self):
+        """
+        Funkcja wczytująca słownik zapisany w pliku o wcześniej podanej nazwię.\n
+        W przypadku jego braku tworzy nowy plik o podanej nazwię.
+        """
         try:
             matricesDictNP = np.load(self.matricesDictName, allow_pickle = 'TRUE')
             self.matricesDict = matricesDictNP.item()
@@ -16,9 +25,10 @@ class matrixOperations():
             print("Błąd podczas wczytywania zapisanych macierzy")
 
         try:
-            self.resultsDict = np.load(self.resultsDictName, allow_pickle = 'TRUE')
+            resultsDictNP = np.load(self.resultsDictName, allow_pickle = 'TRUE')
+            self.resultsDict = resultsDictNP.item()
         except:
-            None
+            self.resultsDict = {}
 
     def operations(self,operando):
         
@@ -110,12 +120,29 @@ class matrixOperations():
         except:
             None
 
-        print(self.results)    
+        print(self.results)
 
     def saveToFile(self,operando):
-        workingDict = {" ".join(operando): self.results}
-        try:
-            self.resultsDict.item().update(workingDict)
-            np.save(self.resultsDictName,self.resultsDict)
-        except:
-            np.save(self.resultsDictName,workingDict)
+        border = 1
+        while border >= 1:
+            try:
+                doSaving = input("Zapisać wynik? (y/n): ")
+                if doSaving != "y" and doSaving != "n":
+                    if border > 1:
+                        print("WPISZ Y LUB N!")
+                    else:
+                        print("Wpisz y lub n...")
+                    border += 1
+                else:               
+                    border = 0
+            except:
+                print("Została podana zła wartość")
+        
+        border = 1
+        if doSaving == "y":
+            workingDict = {" ".join(operando): self.results}
+            try:
+                self.resultsDict.update(workingDict)
+                np.save(self.resultsDictName,self.resultsDict)
+            except:
+                np.save(self.resultsDictName,workingDict)
