@@ -1,11 +1,11 @@
 import numpy as np
 
 class matrixMaker():
-    """
-    Obiekt wykonujący tworzenie oraz zapisywanie macierzy.
-    """
 
     def __init__(self):
+        """
+        Obiekt wykonujący tworzenie oraz zapisywanie macierzy.
+        """
         super().__init__()
 
     def matrixDef(self):
