@@ -134,12 +134,18 @@ class calculator():
                 print("Wpisano: ", workingRoger)
 
             if workingRoger[0] == "dev":
-                if workingRoger[1] == "on":
-                    self.devMode = 1
-                    print("Włączono tryb developerski")
-                if workingRoger[1] == "off":
-                    self.devMode = 0
-                    print("Wyłączono tryb developerski")
+                try:
+                    if workingRoger[1] == "on":
+                        self.devMode = 1
+                        print("Włączono tryb developerski")
+                    if workingRoger[1] == "off":
+                        self.devMode = 0
+                        print("Wyłączono tryb developerski")
+                except Exception as e:
+                    print("Nie znana komenda")
+                    if self.devMode == 1:
+                        print(e)
+
 
             elif workingRoger[0] == "help":
                 self.helpGuide()
@@ -185,7 +191,7 @@ class calculator():
                 try:
                     self.matrixOperations(workingRoger)
                 except Exception as e:
-                    print("Podano nieznaną komendę")
+                    print("Podano błędną komendę")
                     if self.devMode == 1:
                         print(e)
         

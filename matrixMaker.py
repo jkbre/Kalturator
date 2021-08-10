@@ -8,6 +8,7 @@ class matrixMaker():
         """
         super().__init__()
         self.devMode = devMode
+        self.area51 = ['make', 'dev', '.', 'mat', 'res', 'help', 'exit', 'clear', 'show', 'memory', 'history', 'off', 'on', 'cancel']
 
     def matrixDef(self):
         """
@@ -19,7 +20,6 @@ class matrixMaker():
 
         while border >= 1:
             try:
-                 # >>>
                 cmdl = input("Podaj wymiar macierzy n: ")
                 if cmdl == "cancel":
                     escape = 1
@@ -46,9 +46,8 @@ class matrixMaker():
         border = 1
         escape = 0
 
-        while border == 1:
+        while border >= 1:
             try:
-                 # >>>
                 cmdl = input("Podaj wymiar macierzy m: ")
                 if cmdl == "cancel":
                     escape = 1
@@ -137,23 +136,24 @@ class matrixMaker():
         border = 1
         groundhog = 0
         while border >= 1:
-            try:
-                if groundhog == 1:
-                    doCorrection = input("Chcesz jeszcze coś poprawić? (y/n): ").lower()
-                else:
-                    doCorrection = input("Chcesz coś poprawić? (y/n): ").lower()
-                if doCorrection != "y" and doCorrection != "n":
-                    if border > 1:
-                        print("WPISZ Y LUB N!")
+            while border >=1:
+                try:
+                    if groundhog == 1:
+                        doCorrection = input("Chcesz jeszcze coś poprawić? (y/n): ").lower()
                     else:
-                        print("Wpisz y lub n...")
-                    border += 1
-                else:               
-                    border = 0
-            except Exception as e:
-                if self.devMode == 1:
-                    print(e)
-                print("Została podana zła wartość")
+                        doCorrection = input("Chcesz coś poprawić? (y/n): ").lower()
+                    if doCorrection != "y" and doCorrection != "n":
+                        if border > 1:
+                            print("WPISZ Y LUB N!")
+                        else:
+                            print("Wpisz y lub n...")
+                        border += 1
+                    else:               
+                        border = 0
+                except Exception as e:
+                    if self.devMode == 1:
+                        print(e)
+                    print("Została podana zła wartość")
             
             if doCorrection == "n":
                 break
@@ -251,42 +251,55 @@ class matrixMaker():
             while border >=1:
                 try:
                     matrixName = input("Podaj nazwę macierzy: ")
-                    workingMatrixName = list(matrixName)
-                    workingMatrixName = [i for i in workingMatrixName if i.strip()]
-                    try:
-                        workingMatrixName = int(workingMatrixName[0])
-                        print("Nazwa macierzy nie może zaczynać się od liczby i posiadać spacji")
-                        border +=1
-                    except Exception as e:
-                        if self.devMode == 1:
-                            print(e)
-                        if matrixName in matricesDict:    
-                            while border >= 1:
-                                try:
-                                    print("Macierz o podanej nazwię już istnieje")
-                                    doIt = input("Chcesz ją nadpisać? (y/n): ").lower()
-                                    if doIt != "y" and doIt != "n":
-                                        if border > 1:
-                                            print("WPISZ Y LUB N!")
+                    workingMatrixName = list(matrixName.split())
+                    if self.devMode == 1:
+                        print("Wpisano: ", matrixName)
+                        print("Otrzymano: ", workingMatrixName)
+                    if len(workingMatrixName) > 1:
+                        border = 1
+                        try:
+                            workingMatrixName = int(workingMatrixName[0])
+                            print("Nazwa macierzy nie może zaczynać się od liczby i posiadać spacji")
+                        except Exception as e:
+                            print("Nazwa macierzy nie może posiadać spacji")
+                            if self.devMode == 1:
+                                print(e)
+                    else:    
+                        try:
+                            workingMatrixName = int(workingMatrixName[0])
+                            print("Nazwa macierzy nie może być liczbą")
+                            border = 1
+                        except Exception as e:
+                            if self.devMode == 1:
+                                print(e)
+                            matrixName = workingMatrixName[0]
+                            if matrixName in matricesDict:    
+                                while border >= 1:
+                                    try:
+                                        print("Macierz o podanej nazwię już istnieje")
+                                        doIt = input("Chcesz ją nadpisać? (y/n): ").lower()
+                                        if doIt != "y" and doIt != "n":
+                                            if border > 1:
+                                                print("WPISZ Y LUB N!")
+                                            else:
+                                                print("Wpisz y lub n...")
+                                            border += 1
                                         else:
-                                            print("Wpisz y lub n...")
-                                        border += 1
-                                    else:
-                                        border = 0
-                                except Exception as e:
-                                    print("Została podana zła wartość")
-                                    if self.devMode == 1:
-                                        print(e)
-                            if doIt == "y":
-                                print("Macierz została nadpisana")
+                                            border = 0
+                                    except Exception as e:
+                                        print("Została podana zła wartość")
+                                        if self.devMode == 1:
+                                            print(e)
+                                if doIt == "y":
+                                    print("Macierz została nadpisana")
+                                else:
+                                    print("Anulowano operacje")
+                                    border = 1
+                            elif matrixName in self.area51:
+                                print("Wybrano nazwę zastrzeżoną")
+                            
                             else:
-                                print("Anulowano operacje")
-                                border = 1
-                        elif matrixName == "." or matrixName == "mat" or matrixName == "res":
-                            print("Wybrano nazwę zastrzeżoną")
-                        
-                        else:
-                            border = 0
+                                border = 0
                 except Exception as e:
                     if border > 1:
                         print("ZOSTAŁA PODANA BŁĘDNA NAZWA!")
@@ -307,4 +320,8 @@ class matrixMaker():
                 if self.devMode == 1:
                     print(e)
                 np.save(matricesDictName,workingDict)
-            print("Macierz została zapisana jako: ", matrixName)
+            if self.devMode == 1:
+                print(workingMatrixName)
+                print(workingMatrixName[0])
+                print(matrixName)
+            print("Macierz została zapisana jako:", matrixName)
