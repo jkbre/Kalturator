@@ -114,10 +114,12 @@ class matrixMaker():
                             border = 0                
                 except Exception as e:
                     if border > 1:
-                        print("UŻYTO ZŁEJ SKŁADNI!: {}".format(e))
+                        print("UŻYTO ZŁEJ SKŁADNI!")
                     else:
-                        print("Użyto złej składni: {}".format(e))
+                        print("Użyto złej składni")
                         border += 1
+                    if self.devMode == 1:
+                        print(e)
                 if escape == 1:
                     break
             if escape == 1:
