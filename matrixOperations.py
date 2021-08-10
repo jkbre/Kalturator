@@ -1,9 +1,10 @@
 import numpy as np
+import os
 # from numpy.linalg import solve
 
 class matrixOperations():
 
-    def __init__(self, matricesDictName, resultsDictName):
+    def __init__(self, matricesDictName, resultsDictName, devMode = 0):
         """
         W celu przeprowadzenia obliczeń tworzony jest obiekt przechowujący wszystkie potrzebne informajce do ich przeprowadzenia.\n
         matricesDictName -> nazwa pliku w którym zapisywane są powstałe macierze\n
@@ -12,6 +13,7 @@ class matrixOperations():
         super().__init__()
         self.matricesDictName = matricesDictName
         self.resultsDictName = resultsDictName
+        self.devMode = devMode
         self.loadingFromFile()
 
     def loadingFromFile(self):
@@ -19,17 +21,23 @@ class matrixOperations():
         Funkcja wczytująca słownik zapisany w pliku o wcześniej podanej nazwię.\n
         W przypadku jego braku tworzy nowy plik o podanej nazwię.
         """
-        try:
-            matricesDictNP = np.load(self.matricesDictName, allow_pickle = 'TRUE')
-            self.matricesDict = matricesDictNP.item()
-        except:
-            print("Błąd podczas wczytywania zapisanych macierzy")
+        if os.path.exists(self.matricesDictName):
+            try:
+                matricesDictNP = np.load(self.matricesDictName, allow_pickle = 'TRUE')
+                self.matricesDict = matricesDictNP.item()
+            except Exception as e:
+                print("Błąd podczas wczytywania zapisanych macierzy")
+                if self.devMode == 1:
+                    print(e)
+                
 
         try:
             resultsDictNP = np.load(self.resultsDictName, allow_pickle = 'TRUE')
             self.resultsDict = resultsDictNP.item()
-        except:
+        except Exception as e:
             self.resultsDict = {}
+            if self.devMode == 1:
+                print(e)
 
     def operations(self,operando,ans):
         """
@@ -46,8 +54,10 @@ class matrixOperations():
                 else:
                     self.workingMatA = self.matricesDict[operando[1]]
                 solveFor = "fun"
-            except:
+            except Exception as e:
                 print("Operacja nie możliwa do wykonania")
+                if self.devMode == 1:
+                    print(e)
         else:
             if operando[0] == "ans":
                 if isinstance(ans, np.ndarray):
@@ -63,12 +73,16 @@ class matrixOperations():
                 try:
                     self.NumA = float(operando[0])
                     solveFor = "number"
-                except:
+                except Exception as e:
+                    if self.devMode == 1:
+                        print(e)
                     try:
                         self.workingMatA = self.matricesDict[operando[0]]
                         solveFor = "mat"
                     except Exception as e:
-                        print("Pierwszy wyraz jest błędny: {}".format(e))
+                        print("Pierwszy wyraz jest błędny")
+                        if self.devMode == 1:
+                            print(e)
                 
             if operando[2] == "ans":
                 if isinstance(ans, np.ndarray):
@@ -93,15 +107,19 @@ class matrixOperations():
                         solveFor = "matnum"
                     if solveFor == "number":
                         solveFor = "numbers"
-                except:
+                except Exception as e:
+                    if self.devMode == 1:
+                        print(e)
                     try:
                         self.workingMatB = self.matricesDict[operando[2]]
                         if solveFor == "mat":
                             solveFor = "mats"
                         else:
                             solveFor = "wrong"
-                    except:
+                    except Exception as e:
                         print("Drugi wyraz jest błędny")
+                        if self.devMode == 1:
+                            print(e)
 
         # const i const
         if solveFor == "numbers":
@@ -114,15 +132,19 @@ class matrixOperations():
             if operando[1] == "/":
                 try:
                     self.results = self.NumA / self.NumB
-                except:
+                except Exception as e:
                     print("Dzielenie przez 0")
+                    if self.devMode == 1:
+                        print(e)
             if operando[1] == "^":
                 self.results = self.NumA ** self.NumB
             if operando[1] == "^/":
                 try:
                     self.results = self.NumA ** (1/self.NumB)
-                except:
+                except Exception as e:
                     print("Dzielenie przez 0")
+                    if self.devMode == 1:
+                        print(e)
 
         # funkcje macierzowe
         if solveFor == "fun":
@@ -134,8 +156,10 @@ class matrixOperations():
                 try:
                     # if np.linalg.det(self.workingMatA) != 0:
                     self.results = np.linalg.inv(self.workingMatA)
-                except:
+                except Exception as e:
                     print("Wyznacznik macierzy odwracanej równy zero")
+                    if self.devMode == 1:
+                        print(e)
         
         # obliczenia na macierzy
         if solveFor == "matnum":    
@@ -148,15 +172,19 @@ class matrixOperations():
             if operando[1] == "/":
                 try:
                     self.results = self.workingMatA / self.NumB
-                except:
+                except Exception as e:
                     print("Dzielenie przez 0")
+                    if self.devMode == 1:
+                        print(e)
             if operando[1] == "^":
                 self.results = self.workingMatA ** self.NumB
             if operando[1] == "^/":
                 try:
                     self.results = self.workingMatA ** (1/self.NumB)
-                except:
+                except Exception as e:
                     print("Dzielenie przez 0")
+                    if self.devMode == 1:
+                        print(e)
 
         #obliczenia na macierzach
         if solveFor == "mats":
@@ -203,6 +231,8 @@ class matrixOperations():
         try:
             self.resultsDict.update(workingDict)
             np.save(self.resultsDictName,self.resultsDict)
-        except:
+        except Exception as e:
             np.save(self.resultsDictName,workingDict)
+            if self.devMode == 1:
+                print(e)
         return self.results

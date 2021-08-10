@@ -22,7 +22,7 @@ class calculator():
         """
         doAgain = "y"
         while doAgain == "y":     
-            making = matMak.matrixMaker()
+            making = matMak.matrixMaker(self.devMode)
             shield = making.matrixDef()
             if shield != 1:
                 shield = making.valuesInserter()
@@ -49,33 +49,41 @@ class calculator():
                         border += 1
                     else:
                         border = 0
-                except:
+                except Exception as e:
                     print("Została podana zła wartość")
+                    if self.devMode == 1:
+                        print(e)
 
     def dictShow(self, mat = "."):
         """
         Funckja pokazująca wszystkie zapisane macierzę.
         """
-        matricesDictNP = np.load(self.matricesDictName, allow_pickle = 'TRUE')
-        if mat != ".":
-            try:
-                matricesDict = matricesDictNP.item()
-                print(mat, ":\n", matricesDict[mat], '\n')
-            except Exception as e:
-                print("Nie ma takiej macierzy")
+        if os.path.exists(self.matricesDictName):
+            matricesDictNP = np.load(self.matricesDictName, allow_pickle = 'TRUE')
+            if mat != ".":
+                try:
+                    matricesDict = matricesDictNP.item()
+                    print(mat, ":\n", matricesDict[mat], '\n')
+                except Exception as e:
+                    print("Nie ma takiej macierzy")
+            else:
+                print("\n==========MATRICES==========\n")
+                for key,value in matricesDictNP.item().items():
+                    print(key, ':\n', value, '\n')
         else:
-            print("\n==========MATRICES==========\n")
-            for key,value in matricesDictNP.item().items():
-                print(key, ':\n', value, '\n')
+            print("Brak zapisanych macierzy")
 
     def resultsShow(self):
         """
         Funkcja pokazująca wszystkie zapisane wyniki działań matemtycznych.
         """
-        resultsDictNP = np.load(self.resultsDictName, allow_pickle = 'TRUE')
-        print("\n==========RESULTS==========\n")
-        for key,value in resultsDictNP.item().items():
-            print(key, ':\n', value, '\n')
+        if os.path.exists(self.resultsDictName):
+            resultsDictNP = np.load(self.resultsDictName, allow_pickle = 'TRUE')
+            print("\n==========RESULTS==========\n")
+            for key,value in resultsDictNP.item().items():
+                print(key, ':\n', value, '\n')
+        else:
+            print("Brak zapisanych wyników w pamięci")
 
     def matrixOperations(self,operando):
         """
@@ -83,7 +91,7 @@ class calculator():
         Przeprowadzone działanie matematyczne, może zostać zapisane przez użytkownika do pliku.\n
         operando -> lista zawierająca wpisane przez użytkownika działanie
         """
-        doing = matOp.matrixOperations(self.matricesDictName, self.resultsDictName)
+        doing = matOp.matrixOperations(self.matricesDictName, self.resultsDictName, self.devMode)
         border = doing.operations(operando, self.ans)
         if border != 1:
             self.ans = doing.saveToFile(operando)
@@ -94,9 +102,9 @@ class calculator():
         """
         print("\n Możliwe działania:")
         print("\t Tworzenie Macierzy (make)")
-        print("\t Wyświetlenie utworzonych macierzy / otrzmanych wyników (show mat/res)")
+        print("\t Wyświetlenie utworzonych macierzy / otrzmanych wyników / konkretnej macierzy (show mat/res/<imię macierzy>)")
         print("\t Wyłączenie programu (exit)")
-        print("\t Wykonanie obliczenia (do ...)")
+        print("\t Włączenie\Wyłączenie trybu developerskiego (dev on\off)")
         
         print("\n Możliwe obliczenia:")
         print("\t Dodawanie (A + B)")
@@ -147,9 +155,11 @@ class calculator():
                         self.clearHistory()
                     else:
                         return 1
-                except:
+                except Exception as e:
                     self.clearMemory()
-                    self.clearHistory()               
+                    self.clearHistory()
+                    if self.devMode == 1:
+                        print(e)               
 
             elif workingRoger[0] == "make":
                 self.matrixMaker()
@@ -162,10 +172,12 @@ class calculator():
                         self.resultsShow()
                     else:
                         self.dictShow(workingRoger[1])
-                except:
-                    print("==========MATRICES==========")
+                except Exception as e:
+                    if self.devMode == 1:
+                        print(e)
+                    # print("==========MATRICES==========")
                     self.dictShow()
-                    print("==========RESULTS==========")
+                    # print("==========RESULTS==========")
                     self.resultsShow()
 
             else:
@@ -173,7 +185,9 @@ class calculator():
                 try:
                     self.matrixOperations(workingRoger)
                 except Exception as e:
-                    print("Podano nieznaną komendę: {}".format(e))
+                    print("Podano nieznaną komendę")
+                    if self.devMode == 1:
+                        print(e)
         
     def consoleArg(self):
         """
@@ -205,50 +219,62 @@ class calculator():
             if arg == "-d":
                 try:
                     self.matrixOperations(sys.argv[2:])
-                except:
+                except Exception as e:
                     print("Podano nieznaną komendę")
+                    if self.devMode == 1:
+                        print(e)
                 return 1
     
     def clearHistory(self):
-        border = 1
-        while border >= 1:
-                try:
-                     # >>>
-                    usure = input("Jesteś pewien, że chcesz wyczyszcić historię obliczeń? (y/n): ").lower()
-                    if usure != "y" and usure != "n":
-                        if border > 1:
-                            print("WPISZ Y LUB N!")
+        if os.path.exists(self.resultsDictName):
+            border = 1
+            while border >= 1:
+                    try:
+                        # >>>
+                        usure = input("Jesteś pewien, że chcesz wyczyszcić historię obliczeń? (y/n): ").lower()
+                        if usure != "y" and usure != "n":
+                            if border > 1:
+                                print("WPISZ Y LUB N!")
+                            else:
+                                print("Wpisz y lub n...")
+                            border += 1
                         else:
-                            print("Wpisz y lub n...")
-                        border += 1
-                    else:
-                        border = 0
-                except:
-                    print("Została podana zła wartość")
-        if usure == "y":
-            os.remove(self.resultsDictName)
-            print("Historia obliczeń wyczyszczona")
-        if usure == "n":
-            print("Anulowano")
+                            border = 0
+                    except Exception as e:
+                        print("Została podana zła wartość")
+                        if self.devMode == 1:
+                            print(e)
+            if usure == "y":
+                os.remove(self.resultsDictName)
+                print("Historia obliczeń wyczyszczona")
+            if usure == "n":
+                print("Anulowano")
+        else:
+            print("Brak zapisanych wyników w pamięci")
     
     def clearMemory(self):
-        border = 1
-        while border >= 1:
-                try:
-                     # >>>
-                    usure = input("Jesteś pewien, że chcesz wyczyszcić listę zapisanych macierzy? (y/n): ").lower()
-                    if usure != "y" and usure != "n":
-                        if border > 1:
-                            print("WPISZ Y LUB N!")
+        if os.path.exists(self.matricesDictName):
+            border = 1
+            while border >= 1:
+                    try:
+                        # >>>
+                        usure = input("Jesteś pewien, że chcesz wyczyszcić listę zapisanych macierzy? (y/n): ").lower()
+                        if usure != "y" and usure != "n":
+                            if border > 1:
+                                print("WPISZ Y LUB N!")
+                            else:
+                                print("Wpisz y lub n...")
+                            border += 1
                         else:
-                            print("Wpisz y lub n...")
-                        border += 1
-                    else:
-                        border = 0
-                except:
-                    print("Została podana zła wartość")
-        if usure == "y":
-            os.remove(self.matricesDictName)
-            print("Zapisane macierze zostały usunięte")
-        if usure == "n":
-            print("Anulowano")
+                            border = 0
+                    except Exception as e:
+                        print("Została podana zła wartość")
+                        if self.devMode == 1:
+                            print(e)
+            if usure == "y":
+                os.remove(self.matricesDictName)
+                print("Zapisane macierze zostały usunięte")
+            if usure == "n":
+                print("Anulowano")
+        else:
+            print("Brak zapisanych macierzy")

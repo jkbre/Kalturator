@@ -2,11 +2,12 @@ import numpy as np
 
 class matrixMaker():
 
-    def __init__(self):
+    def __init__(self,devMode = 0):
         """
         Obiekt wykonujący tworzenie oraz zapisywanie macierzy.
         """
         super().__init__()
+        self.devMode = devMode
 
     def matrixDef(self):
         """
@@ -36,7 +37,9 @@ class matrixMaker():
                     self.n = int(self.n)
                     border = 0
             except Exception as e:
-                print("Podany wymiar jest błędny: {}".format(e))
+                print("Podany wymiar jest błędny")
+                if self.devMode == 1:
+                    print(e)
         if escape == 1:
             return 1
 
@@ -62,14 +65,18 @@ class matrixMaker():
                 else:
                     self.m = int(self.m)
                     border = 0
-            except:
+            except Exception as e:
                 print("Została podana zła wartość")
+                if self.devMode == 1:
+                    print(e)
         if escape == 1:
             return 1
         
         try:
             self.workingMatrix = np.empty((self.n,self.m),float)
-        except:
+        except Exception as e:
+            if self.devMode == 1:
+                print(e)
             print("Tworzenie macierzy nie powiodło się.\nPodano za dużą wartość wymiarów macierzy")
             return 1
 
@@ -143,7 +150,9 @@ class matrixMaker():
                     border += 1
                 else:               
                     border = 0
-            except:
+            except Exception as e:
+                if self.devMode == 1:
+                    print(e)
                 print("Została podana zła wartość")
             
             if doCorrection == "n":
@@ -157,9 +166,11 @@ class matrixMaker():
                             correctionPlace = [1, 1]
                         else:
                             correctionPlace = input("Podaj pozycje wartości do poprawy (nxm): ")
-                            print(correctionPlace)
+                            if self.devMode == 1:
+                                print("Wpisano: ", correctionPlace)
                             correctionPlace = list(map(int,list(correctionPlace.split("x"))))
-                            print(correctionPlace)
+                            if self.devMode == 1:
+                                print("Otrzymano: ", correctionPlace)
                         if correctionPlace[0] > self.n or correctionPlace[1] > self.m:
                             if border > 1:
                                 print("POZA MACIERZĄ!")
@@ -177,10 +188,12 @@ class matrixMaker():
                     correctionPlace = [i-1 for i in correctionPlace]
                 except Exception as e:
                     if border > 1:
-                        print("UŻYTO ZŁEJ SKŁADNI!: {}".format(e))
+                        print("UŻYTO ZŁEJ SKŁADNI!")
                     else:
-                        print("Użyto złej składni: {}".format(e))
+                        print("Użyto złej składni")
                         border += 1
+                    if self.devMode == 1:
+                        print(e)
             
             border = 1
             while border >= 1:
@@ -189,10 +202,12 @@ class matrixMaker():
                     border = 0
                 except Exception as e:
                     if border > 1:
-                        print("UŻYTO ZŁEJ SKŁADNI!: {}".format(e))
+                        print("UŻYTO ZŁEJ SKŁADNI!")
                     else:
-                        print("Użyto złej składni: {}".format(e))
+                        print("Użyto złej składni")
                         border += 1
+                    if self.devMode == 1:
+                        print(e)
 
             self.workingMatrix[correctionPlace[0],correctionPlace[1]] = correctedVal
             print("Macierz po zmianie:")
@@ -209,8 +224,10 @@ class matrixMaker():
         try:
             matricesDictNP = np.load(matricesDictName, allow_pickle = 'TRUE')
             matricesDict = matricesDictNP.item()
-        except:
-            None
+        except Exception as e:
+            matricesDict = {}
+            if self.devMode == 1:
+                print(e)
         
         border = 1
         while border >= 1:
@@ -224,8 +241,10 @@ class matrixMaker():
                     border += 1
                 else:               
                     border = 0
-            except:
+            except Exception as e:
                 print("Została podana zła wartość")
+                if self.devMode == 1:
+                    print(e)
         
         border = 1
         if doSaving == "y":
@@ -238,11 +257,12 @@ class matrixMaker():
                         workingMatrixName = int(workingMatrixName[0])
                         print("Nazwa macierzy nie może zaczynać się od liczby i posiadać spacji")
                         border +=1
-                    except:
+                    except Exception as e:
+                        if self.devMode == 1:
+                            print(e)
                         if matrixName in matricesDict:    
                             while border >= 1:
                                 try:
-                                    # >>>
                                     print("Macierz o podanej nazwię już istnieje")
                                     doIt = input("Chcesz ją nadpisać? (y/n): ").lower()
                                     if doIt != "y" and doIt != "n":
@@ -253,27 +273,38 @@ class matrixMaker():
                                         border += 1
                                     else:
                                         border = 0
-                                except:
+                                except Exception as e:
                                     print("Została podana zła wartość")
+                                    if self.devMode == 1:
+                                        print(e)
                             if doIt == "y":
                                 print("Macierz została nadpisana")
                             else:
                                 print("Anulowano operacje")
-                                return 1
+                                border = 1
+                        elif matrixName == "." or matrixName == "mat" or matrixName == "res":
+                            print("Wybrano nazwę zastrzeżoną")
+                        
                         else:
                             border = 0
-                except:
+                except Exception as e:
                     if border > 1:
                         print("ZOSTAŁA PODANA BŁĘDNA NAZWA!")
                     else:
                         print("Została podana błędna nazwa")
+                    if self.devMode == 1:
+                        print(e)
                     border += 1
             
             workingDict = {matrixName: self.workingMatrix}
+            
             try:
                 # matricesDictNP = np.load(matricesDictName, allow_pickle = 'TRUE')
                 # matricesDict = matricesDictNP.item()
                 matricesDict.update(workingDict)
                 np.save(matricesDictName,matricesDict)
-            except:
+            except Exception as e:
+                if self.devMode == 1:
+                    print(e)
                 np.save(matricesDictName,workingDict)
+            print("Macierz została zapisana jako: ", matrixName)
